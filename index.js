@@ -1,8 +1,12 @@
 var app = require('express')();
 var http = require('http').createServer(app);
 const redisAdapter = require('socket.io-redis');
+const PORT = process.env.PORT || 3000;
+const REDIS_URL = process.env.REDIS_URL;
+const REDIS_KEY = process.env.REDIS_KEY || '';
+
 var io = require('socket.io')(http);
-io.adapter(redisAdapter({ host: 'localhost', port: 6379 }));
+io.adapter(redisAdapter(REDIS_URL, { key: REDIS_KEY }));
 
 app.get('/', function(req, res){
     res.sendFile(__dirname + '/index.html');
@@ -81,6 +85,6 @@ io.on('connection', socket => {
       });
 });
 
-http.listen(3000, function(){
-  console.log('listening on *:3000');
+http.listen(PORT, function(){
+  console.log('listening on ' + PORT);
 });
