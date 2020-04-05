@@ -1,0 +1,31 @@
+{
+  "name": "testsocketapp",
+  "version": "1.0.0",
+  "description": "test socket",
+  "main": "index.js",
+  "dependencies": {
+    "express": "^4.17.1",
+    "redis": "^3.0.2",
+    "redis-server": "^1.2.2",
+    "socket.io": "^2.3.0",
+    "socket.io-redis": "^5.2.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/itsjoshua/testSocketApp.git"
+  },
+  "keywords": [
+    "test",
+    "socket.io"
+  ],
+  "author": "itsjoshua",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/itsjoshua/testSocketApp/issues"
+  },
+  "homepage": "https://github.com/itsjoshua/testSocketApp#readme"
+}
