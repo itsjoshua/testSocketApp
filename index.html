@@ -1,0 +1,129 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>Socket.IO chat</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font: 13px Helvetica, Arial;
+        }
+
+        form {
+            background: #000;
+            padding: 3px;
+            position: relative;
+            bottom: 0;
+            width: 100%;
+        }
+
+        form input {
+            border: 0;
+            padding: 10px;
+            width: 90%;
+            margin-right: .5%;
+        }
+
+        form button {
+            width: 9%;
+            background: rgb(130, 224, 255);
+            border: none;
+            padding: 10px;
+        }
+
+        #messages {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        #messages li {
+            padding: 5px 10px;
+        }
+
+        #messages li:nth-child(odd) {
+            background: #eee;
+        }
+    </style>
+</head>
+
+<body>
+    <ul id="messages"></ul>
+    <div id="formContainer">
+        <form action="" id="game">
+            <input id="gameName" autocomplete="off" /><button>Send</button>
+        </form>
+        <form action="" id="mes">
+            <input id="m" autocomplete="off" /><button id="bid">Publish bid</button>
+        </form>
+        <button id="finish">Finish bid</button>
+        <button id="start">Start game</button>
+        <div id="nxtP"></div>
+    </div>
+    
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+    <script>
+        $(function () {
+            var socket = io();
+            var roomN = '';
+            var nextPlayer = '';
+            $('button#start').attr('disabled', true);
+            $('button#bid').attr('disabled', true);
+            $('form#game').submit(function (e) {
+                e.preventDefault(); // prevents page reloading
+                socket.emit('gameName', $('#gameName').val());
+                roomN = $('#gameName').val();
+                $('#gameName').val('');
+                return false;
+            });
+            $('form#mes').submit(function (e) {
+                e.preventDefault(); // prevents page reloading
+                var bidStr = nextPlayer + '==_==*==@==' + $('#m').val();
+                socket.emit('publishBid', bidStr);
+                $('#m').val('');
+                return false;
+            });
+            $('button#finish').click(function (e) {
+                console.log('finishBid about to be send');
+                socket.emit('finishBid', 'complete');
+                console.log('finishBid completed');
+            });
+            $('button#start').click(function (e) {
+                socket.emit('startGame', 'start');
+            })
+            socket.on('bidPublished', (msg) => {
+                $('#messages').append($('<li>').text('Bid : ' + msg));
+            });
+            socket.on('bid complete', (msg) => {
+                $('#messages').append($('<li>').text(msg));
+            });
+            socket.on('nextPlayer',(nxtP) => {
+                console.log('in nextPlayer listener');
+                nextPlayer = nxtP;
+                $('#nxtP').append($('<p>').text(nextPlayer));
+            });
+            socket.on('readyToStart',(rts) => {
+                console.log('in ready to start');
+                $('button#start').attr('disabled', false);
+            });
+            socket.on('publishBidEnable', (msg) => {
+                console.log('in publishBidEnable');
+                $('button#bid').attr('disabled', false);
+            });
+            socket.on('disableAll', (mes) => {
+                console.log('in disableAll');
+                $('button#start').attr('disabled', true);
+                $('button#bid').attr('disabled', true);
+            })
+            
+        });
+    </script>
+</body>
+
+</html>
